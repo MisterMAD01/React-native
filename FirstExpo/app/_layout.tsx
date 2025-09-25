@@ -1,5 +1,3 @@
-// app/_layout.tsx
-import React from "react";
 import { Stack } from "expo-router";
 
 export default function RootLayout() {
@@ -7,11 +5,15 @@ export default function RootLayout() {
     <Stack
       screenOptions={{
         headerShown: true,
-        headerStyle: { backgroundColor: "#960669" },
-        headerTintColor: "#fff",
-        headerTitleStyle: { fontWeight: "bold" },
+        headerTitleAlign: "center",
+        headerStyle: {
+          backgroundColor: "#960669",
+        },
+        headerTintColor: "#ffffff",
       }}
     >
+      {/* <Stack.Screen name="(admin)" options={{ headerShown: false }} /> */}
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="index" options={{ title: "Home" }} />
       <Stack.Screen name="contact" options={{ title: "Contact us" }} />
     </Stack>
