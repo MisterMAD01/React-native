@@ -6,7 +6,7 @@ import { View, Pressable, Text, StyleSheet } from "react-native";
 import * as React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-// ใช้ type utility เพื่อดึงชื่อไอคอนทั้งหมด
+// กำหนด Type ของ Props สำหรับ Icon component
 type TabBarIconProps = {
   name: React.ComponentProps<typeof Ionicons>["name"];
   color: string;
@@ -16,15 +16,14 @@ type TabBarIconProps = {
 
 const ICON_SIZE = 28;
 
+// Custom Tab Bar Component พร้อม Gradient Background (โทนส้ม)
 function CustomTabBar(props: BottomTabBarProps) {
-  // Active Tab: ทึบแสง 100% (Alpha 1.0)
   const activeColor = "#FFFFFF";
-  // Inactive Tab: ทึบแสง 50% (Alpha 0.5) เพื่อให้ดูจางลง
-  const inactiveColor = "rgba(255, 255, 255, 0.5)";
+  const inactiveColor = "rgba(255, 255, 255, 0.7)";
 
   return (
     <LinearGradient
-      colors={["#1c9273", "#004d40"]}
+      colors={["#FF8800", "#EE4D2D"]} // Gradient ส้มสดไปส้มเข้ม Shopee
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={tabBarStyles.gradientBackground}
@@ -34,17 +33,16 @@ function CustomTabBar(props: BottomTabBarProps) {
           const isFocused = props.state.index === index;
           const { options } = props.descriptors[route.key];
 
+          // แก้ไข: Type Assertion เพื่อความสมบูรณ์ของ TypeScript
           const IconComponent = options.tabBarIcon
-            ? options.tabBarIcon({
+            ? (options.tabBarIcon({
                 color: activeColor,
                 focused: isFocused,
                 size: ICON_SIZE,
-              })
+              }) as React.ReactElement<TabBarIconProps>)
             : null;
 
-          const iconProps = IconComponent
-            ? (IconComponent as React.ReactElement<TabBarIconProps>).props
-            : null;
+          const iconProps = IconComponent ? IconComponent.props : null;
 
           const label =
             typeof options.title === "string" ? options.title : route.name;
@@ -84,6 +82,7 @@ function CustomTabBar(props: BottomTabBarProps) {
   );
 }
 
+// TabLayout ใช้ CustomTabBar
 export default function TabLayout() {
   return (
     <Tabs
@@ -94,11 +93,38 @@ export default function TabLayout() {
       tabBar={(props) => <CustomTabBar {...props} />}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name="home" color={color} />
+            <TabBarIcon
+              name={focused ? "home" : "home-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="products/index"
+        options={{
+          title: "Shop",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "basket" : "basket-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="cart"
+        options={{
+          title: "Cart",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "cart" : "cart-outline"}
+              color={color}
+            />
           ),
         }}
       />
@@ -107,7 +133,10 @@ export default function TabLayout() {
         options={{
           title: "Contact",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name="call" color={color} />
+            <TabBarIcon
+              name={focused ? "call" : "call-outline"}
+              color={color}
+            />
           ),
         }}
       />
@@ -116,7 +145,10 @@ export default function TabLayout() {
         options={{
           title: "Admin",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name="person" color={color} />
+            <TabBarIcon
+              name={focused ? "person" : "person-outline"}
+              color={color}
+            />
           ),
         }}
       />
@@ -124,6 +156,7 @@ export default function TabLayout() {
   );
 }
 
+// Stylesheet สำหรับ Custom Tab Bar
 const tabBarStyles = StyleSheet.create({
   gradientBackground: {
     height: 60,
